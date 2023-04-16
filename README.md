@@ -1,1 +1,1 @@
-A graphql api for databases querying using graphql 
+A graphql based find her app api
