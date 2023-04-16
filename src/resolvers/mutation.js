@@ -4,13 +4,18 @@ const jwt = require("jsonwebtoken")
 const {  AuthenticationError,ForbiddenError}= require("apollo-server-express")
 const gravatar = require('../util/gravatar')
 const { model } = require("mongoose")
+const mongoose = require("mongoose")
 //JWT_SECRET="PassPhrase"
 require("dotenv").config()
 module.exports={
-    newNote:async (parent,args,{models})=>{
+    newNote:async (parent,args,{models,user})=>{
+        if(!user){
+            throw new AuthenticationError("You must be signed in to create a not")
+        }
         return await models.Note.create({
+
           content:args.content,
-          author:'smartsam'  
+          author:mongoose.Types.ObjectId(user.id)
         })
         
         
