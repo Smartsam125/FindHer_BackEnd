@@ -2,18 +2,14 @@
 const {ApolloServer,gql} =require("apollo-server-express")
 const express =require('express');
 const mongoose =require('mongoose')
+const jwt =require("jsonwebtoken")
 //onst { nonExecutableDefinitionMessage } = require("graphql/validation/rules/executabledefinitions");
 //require('dotenv').config();
 //const db=require('./db');
 const models = require("./models");
 
 const port = process.env.PORT || 4000
-// let notes =[
-//     {id:1,content:"This is a note",author:"Smart sam"},
-//     {id:2,content:"This is another note",author:"Jjumba eric benjmin"},
-//     {id:3,content:"Ok hey,this another note",author:"Jovita"},
 
-// ];
 const typeDefs =require("./Schema.js")
 
 const resolvers = require("./resolvers")
@@ -26,10 +22,25 @@ main().catch((err)=>{
 async function main(){
   await mongoose.connect('mongodb://localhost:27017/notedly')
 }
+const getUser=token=>{
+     if(token){
+         try {
+           return jwt.verify(token,process.env.JWT_SECRET)  
+            
+         } catch (error) {
+             throw new Error("invalid session")
+            
+         }
+
+     }
+}
 
 const server=new ApolloServer({typeDefs,resolvers,
-    context:()=>{
-        return {models}
+    context:({req})=>{
+        const token =req.headers.authorization
+       const user =getUser(token)
+        console.log(user);
+        return {models,user}
     } })
 server.applyMiddleware({app,path:'/api'})
 app.listen({port},()=>{

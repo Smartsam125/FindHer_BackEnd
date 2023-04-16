@@ -20,13 +20,13 @@ type Mutation{
     updateNote(id:ID!,content:String!):Note!
     deleteNote(id:ID!):Boolean!
     signUp(username:String!,email:String!,password:String!):String!
-    signIn(username:String!,email:String!,password:String!):String!
+    signIn(username:String,email:String,password:String!):String!
 }
 type User {
     id:ID!
     username:String!
     email:String!
-    avatar:STring!
+    avatar:String
     notes:[Note!]!
 }
 `
