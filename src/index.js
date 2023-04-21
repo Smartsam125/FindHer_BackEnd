@@ -3,24 +3,31 @@ const {ApolloServer,gql} =require("apollo-server-express")
 const express =require('express');
 const mongoose =require('mongoose')
 const jwt =require("jsonwebtoken")
+const helmet =require("helmet")
+const cors =require("cors")
 //onst { nonExecutableDefinitionMessage } = require("graphql/validation/rules/executabledefinitions");
-//require('dotenv').config();
+require('dotenv').config();
 //const db=require('./db');
 const models = require("./models");
 
-const port = process.env.PORT || 4000
+const port = process.env.PORT || 8080
 
 const typeDefs =require("./Schema.js")
 
 const resolvers = require("./resolvers")
+const depthLimit = require('graphql-depth-limit');
+const { createComplexityLimitRule } = require('graphql-validation-complexity');
 
 const app=express()
 //db.connect(process.env.DB_HOST)
+app.use(helmet())
+app.use(cors())
+
 main().catch((err)=>{
     console.log(err);
 })
 async function main(){
-  await mongoose.connect('mongodb://localhost:27017/notedly')
+  await mongoose.connect('mongodb+srv://samsonmujabi:xnceAzXl4AVpZwjX@cluster0.2zlfemb.mongodb.net/?retryWrites=true&w=majority')
 }
 const getUser=token=>{
      if(token){
@@ -36,8 +43,10 @@ const getUser=token=>{
 }
 
 const server=new ApolloServer({typeDefs,resolvers,
+    validationRules: [depthLimit(5), createComplexityLimitRule(1000)],
     context:({req})=>{
         const token =req.headers.authorization
+        
        const user =getUser(token)
         console.log(user);
         return {models,user}
