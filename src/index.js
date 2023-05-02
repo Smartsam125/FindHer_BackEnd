@@ -5,16 +5,22 @@ const mongoose =require('mongoose')
 const jwt =require("jsonwebtoken")
 const helmet =require("helmet")
 const cors =require("cors")
+
 //onst { nonExecutableDefinitionMessage } = require("graphql/validation/rules/executabledefinitions");
 require('dotenv').config();
 //const db=require('./db');
 const models = require("./models");
+mongoose.set('useNewUrlParser',true)
+mongoose.set('useFindAndModify',false)
+mongoose.set('useCreateIndex',true)
+mongoose.set('useUnifiedTopology',true)
 
 const port = process.env.PORT || 8080
 
 const typeDefs =require("./Schema.js")
 
 const resolvers = require("./resolvers")
+
 const depthLimit = require('graphql-depth-limit');
 const { createComplexityLimitRule } = require('graphql-validation-complexity');
 
@@ -27,7 +33,8 @@ main().catch((err)=>{
     console.log(err);
 })
 async function main(){
-  await mongoose.connect('mongodb+srv://samsonmujabi:xnceAzXl4AVpZwjX@cluster0.2zlfemb.mongodb.net/?retryWrites=true&w=majority')
+  await mongoose.connect('mongodb+srv://smartsam:Student3samj@cluster0.txuv9rs.mongodb.net/?retryWrites=true&w=majority')
+  //await mongoose.connect(process.env.DB_HOST)
 }
 const getUser=token=>{
      if(token){
